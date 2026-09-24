@@ -1,0 +1,82 @@
+# Build Android APK with Expo EAS on GitHub Actions
+#
+# Required secret:
+#   EXPO_TOKEN  →  https://expo.dev/settings/access-tokens
+#
+# Run: Actions → "Build Android APK" → Run workflow
+
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: 'EAS build profile'
+        required: true
+        default: 'preview'
+        type: choice
+        options:
+          - preview
+          - production
+          - development
+  push:
+    tags:
+      - 'v*'
+
+concurrency:
+  group: build-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: EAS Android APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Choose profile
+        id: profile
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "name=${{ inputs.profile }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "name=production" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build APK
+        run: |
+          eas build \
+            --platform android \
+            --profile "${{ steps.profile.outputs.name }}" \
+            --non-interactive \
+            --wait
+
+      # Optional: list recent builds in the job summary
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo "### Rx/Check APK"
+            echo ""
+            echo "- Profile: \`${{ steps.profile.outputs.name }}\`"
+            echo "- Download: [Expo dashboard → Builds](https://expo.dev)"
+            echo "- Or use: \`eas build:list -p android\`"
+          } >> "$GITHUB_STEP_SUMMARY"

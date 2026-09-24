@@ -1,0 +1,51 @@
+# Optional: build APK on GitHub runners without EAS cloud
+# Uses expo prebuild + Gradle. Heavier; no Expo token required.
+# Enable if you prefer self-hosted Android builds.
+
+name: Build APK (local Gradle)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  gradle-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install JS deps
+        run: npm ci || npm install
+
+      - name: Expo prebuild (generate android/)
+        run: npx expo prebuild --platform android --no-install
+
+      - name: Assemble release APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease --no-daemon
+        env:
+          # Debug keystore is fine for internal testing; replace for Play Store
+          NODE_ENV: production
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: rxcheck-local-apk
+          path: android/app/build/outputs/apk/release/*.apk
+          retention-days: 30
