@@ -1,0 +1,7 @@
+npx create-expo-app rx-check
+cd rx-check
+
+npm install expo-router
+npm install vitest
+
+npm start
