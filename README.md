@@ -16,16 +16,3 @@ Expo/React Native starter implementing the requested clinical/editorial mobile f
 
 ## Important clinical limitation
 The bundled interaction rules are deliberately a small **demo rule set**. They are not an authoritative clinical database and must not be used for real dispensing decisions. For clinical deployment, connect the interaction/dosing engine to a properly licensed, authoritative source, add validation/quality controls, auditability, privacy/security controls, and complete the applicable medical-device/software regulatory assessment.
-
-## Run
-```bash
-npm install
-npx expo start
-```
-
-For an OCR backend, set `EXPO_PUBLIC_OCR_GATEWAY` to your HTTPS OCR endpoint. The gateway should accept multipart `image` uploads and return JSON shaped like:
-```json
-{"patient":{"name":"...","age":"..."},"medicines":[{"id":"x","name":"Drug","dose":"10","unit":"mg","freq":"1","ocrConfidence":0.96}]}
-```
-
-The client enforces a 5 MiB cap and validates PNG/JPEG/WebP magic headers before sending.
