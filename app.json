@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "Rx/Check",
+    "slug": "rxcheck",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "rxcheck",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "plugins": [
+      ["expo-image-picker", {"photosPermission":"Rx/Check uses your photos to read prescription images.","cameraPermission":"Rx/Check uses your camera to scan prescriptions.","microphonePermission":false}],
+      "expo-router"
+    ],
+    "ios": {"supportsTablet": true},
+    "android": {"adaptiveIcon": {"backgroundColor":"#F4F6F2"}}
+  }
+}
