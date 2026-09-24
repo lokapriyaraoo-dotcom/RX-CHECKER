@@ -1,0 +1,26 @@
+rx-check-ai-prescription-detector/
+│
+├── app/
+│   ├── index.tsx
+│   ├── patient.tsx
+│   ├── prescription.tsx
+│   ├── analysis.tsx
+│   ├── results.tsx
+│   ├── alternatives.tsx
+│   └── report.tsx
+│
+├── src/
+│   ├── components/
+│   ├── services/
+│   ├── store/
+│   ├── theme/
+│   └── tests/
+│
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+│
+├── package.json
+├── app.json
+├── tsconfig.json
+└── README.md
